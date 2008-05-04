@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaming Codes\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-20 12:31-0300\n"
-"PO-Revision-Date: 2008-04-20 12:33-0300\n"
+"POT-Creation-Date: 2008-05-04 12:43-0300\n"
+"PO-Revision-Date: 2008-05-04 12:44-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -13,64 +13,77 @@ msgstr ""
 "X-Poedit-Basepath: /home/egraells/workspace/gaming-codes\n"
 "X-Poedit-SearchPath-0: /home/egraells/workspace/gaming-codes\n"
 
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:21
 #: /home/egraells/workspace/gaming-codes/gaming-codes.php:22
 #: /home/egraells/workspace/gaming-codes/gaming-codes.php:23
 #: /home/egraells/workspace/gaming-codes/gaming-codes.php:24
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:25
 msgid "console"
 msgstr "consola"
 
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:22
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:21
 msgid "Nintendo DS Friend Code"
-msgstr ""
+msgstr "NDS Friend Code"
+
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:22
+msgid "Nintendo Wii Friend Code"
+msgstr "Wii Friend Code"
 
 #: /home/egraells/workspace/gaming-codes/gaming-codes.php:23
-msgid "Nintendo Wii Friend Code"
-msgstr ""
+msgid "XBox-Live Gamer Tag"
+msgstr "XBox-Live Tag"
 
 #: /home/egraells/workspace/gaming-codes/gaming-codes.php:24
-msgid "XBox-Live Gamer Tag"
-msgstr ""
+msgid "PlayStation Network ID"
+msgstr "PSN ID"
 
 #: /home/egraells/workspace/gaming-codes/gaming-codes.php:25
-msgid "PlayStation Network ID"
-msgstr ""
-
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:26
 msgid "emulation"
 msgstr "emulacion"
 
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:26
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:25
 msgid "GGPO.net Username"
 msgstr "Usuario de GGPO.net"
 
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:50
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:49
 msgid "What are you looking at?"
 msgstr "¿Qué estás mirando?"
 
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:52
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:51
 msgid "Gaming Codes"
 msgstr "Códigos Gamer"
 
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:165
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:175
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:176
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:190
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:231
+msgid "searching"
+msgstr "busqueda"
+
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:175
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:176
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:190
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:231
+msgid "people"
+msgstr "gente"
+
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:190
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:193
+#, php-format
+msgid "With a %s"
+msgstr "Con %s"
+
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:206
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:219
 #, php-format
 msgid "Users with a %s"
 msgstr "Usuarios con %s"
 
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:186
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:187
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:200
-msgid "searching"
-msgstr "busqueda"
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:208
+msgid "Sorry"
+msgstr "Lo sentimos"
 
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:186
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:187
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:200
-msgid "people"
-msgstr "gente"
-
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:200
-#: /home/egraells/workspace/gaming-codes/gaming-codes.php:203
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:231
+#: /home/egraells/workspace/gaming-codes/gaming-codes.php:234
 #, php-format
 msgid "See users with a %s"
 msgstr "Usuarios con %s"
