@@ -1,9 +1,9 @@
 === Gaming Codes ===
 Contributors: Detective
 Donate link: none
-Tags: users, gaming, gamer, gamer codes, friend code
-Requires at least: 2.5
-Tested up to: 2.5
+Tags: users, gaming, gamer, gamer codes, friend code, el-aleph, gamercard, gamertag, ggpo, ps3, nds, wii, x360
+Requires at least: 2.5.1
+Tested up to: 2.6
 Stable tag: trunk
 
 Gaming Codes allows each user to enter his gamer codes for "next-gen" consoles.
@@ -14,7 +14,9 @@ Gaming Codes allows each user to enter his gamer codes for "next-gen" consoles. 
 
 Also, this plugin can use another plugin, [El Aleph](http://wordpress.org/extend/plugins/el-aleph "El Aleph on WP Extend"), to generate lists of users that have codes for a certain platform.
 
-You can see an example here: http://www.ryuuko.cl/gente/mrhadoken/ . This is a profile page in El Aleph, showing two gamer codes and the user description.
+Examples:
+* [Profile in bbPress](http://www.ryuuko.cl/bbpress/profile.php?id=15 ). This is a profile page in bbPress (integrated with WP). Note the gaming codes and the gamer card.
+* [User List in Aleph](http://www.ryuuko.cl/busqueda/gente/emulacion/ggpo/ ). This is a user view in Aleph, showing all users who are registered in GGPO.net. GGPO is a gaming code supported by this plugin.
 
 This plugin is licensed under the terms of the GPL v3. Please see the file license.txt.
 
@@ -29,10 +31,14 @@ If you have 'El Aleph' installed:
 
 * A template tag for user loops: `the_user_gaming_codes`.
 * An user list of people having gamer codes in a certain console/system. The template tag `gaming_codes_links` displays links to those user lists.
-* The template tag `is_gaming_code_listing` returns true if the user is browsing a list based on gaming codes.
-* You can make more complex user queries intersecting Gaming Codes and the AuthorInterests taxonomy. For example, you could find all the users having a PSN ID that likes the game "Metal Gear Solid 4". 
+* The template tag `is_gaming_code_listing` returns true if the user is browsing a list based on gaming codes. 
 
 == Changelog ==
+
+= Version 1.5 =
+
+* The plugin has been simplified, according to the changes in Aleph 0.7.
+* Added a gamercard template tag for authors.
 
 = Version 1.1 =
 

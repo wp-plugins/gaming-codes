@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Gaming Codes
-Plugin URI: http://www.ryuuko.cl/desarrollo
+Plugin URI: http://alumnos.dcc.uchile.cl/~egraells
 Description: A plugin that allows your users to have Gamer Codes. Also, if you have 'El Aleph' (another plugin) installed, you can make list of users for each console.
-Version: 1.1
+Version: 1.5
 Author URI: http://alumnos.dcc.uchile.cl/~egraells
 
 This plugin is licensed under the terms of the General Public License. Please see the file license.txt.
@@ -15,6 +15,9 @@ This plugin is licensed under the terms of the General Public License. Please se
 add_action('init', 'gaming_codes_initialize', 100);
 
 function gaming_codes_initialize() {
+	
+	load_plugin_textdomain("gaming-codes", 'wp-content/plugins/gaming-codes');
+	
 	global $gaming_fields;
 	
 	$gaming_fields = array(
@@ -25,7 +28,15 @@ function gaming_codes_initialize() {
 		'ggpo' => array('id' => 'gaming_code-ggpo', 'type' => __('emulation', 'gaming-codes'), 'description' => __("GGPO.net Username", "gaming-codes"))
 	);	
 	
-	load_plugin_textdomain("gaming-codes", 'wp-content/plugins/gaming-codes');	
+	if (function_exists('aleph_register_user_view')) {
+		foreach ($gaming_fields as $slug => $field) {
+			$view_slug = 'gaming-codes-' . $slug;
+			$view_title = sprintf(__("Users with a %s", 'gaming-codes'), $field['description']);
+			$view_query = '_user_key=' . $field['id'];
+			$view_url_slug = $field['type'] . '/' . $slug;
+			aleph_register_user_view($view_slug, $view_title, $view_query, $view_url_slug);
+		}
+	}	
 }
 
 register_activation_hook(__FILE__, 'gaming_codes_activation');
@@ -71,7 +82,7 @@ add_action('profile_update', 'gaming_codes_process_form');
 function gaming_codes_process_form($user_id) {
 	global $gaming_fields;
 	foreach ($gaming_fields as $slug => $field) {
-		if (isset($_POST[$field['id']]))
+		if (isset($_POST[$field['id']]) && !empty($_POST[$field['id']]))
 			update_usermeta($user_id, $field['id'], stripslashes($_POST[$field['id']]));
 		else
 			delete_usermeta($user_id, $field['id']);
@@ -91,11 +102,15 @@ function the_user_gaming_codes($before = '', $after = '', $u = NULL) {
 		$codes = array();
 		
 		foreach ($gaming_fields as $slug => $field) {
-			if ($u->{$field['id']}) 
-				$codes[] = '<li class="' . $slug . '"><span>' . $field['description'] . '</span> ' . $u->{$field['id']} . '</li>';
+			$field_key = preg_replace('|[^a-z0-9_]|i', '', $field['id']);
+			if (empty($field_key))
+				continue;
+			if ($u->{$field_key}) 
+				$codes[] = '<li class="' . $slug . '"><span>' . $field['description'] . '</span> ' . $u->{$field_key} . '</li>';
 			else {
-				$value = get_usermeta($u->ID, $field['id']);
-				if ($value != '') $codes[] = '<li class="' . $slug . '"><span>' . $field['description'] . '</span> ' . $value . '</li>';
+				$value = get_usermeta($u->ID, $field_key);
+				if (!empty($value)) 
+					$codes[] = '<li class="' . $slug . '"><span>' . $field['description'] . '</span> ' . $value . '</li>';
 			}
 		}
 		
@@ -117,125 +132,58 @@ function the_author_gaming_codes($before = '', $after = '') {
 
 /// the following is for the plugin 'El Aleph'
 
-add_filter('query_vars', 'gaming_codes_query_vars');
-
-function gaming_codes_query_vars($qvars) {
-	$qvars[] = 'gaming_code';
-	return $qvars;
-}
-
-add_filter('users_query', 'gaming_codes_users_query');
-
-function gaming_codes_users_query($query) {
-	if ('author-list' == get_query_var('pagename') && '' != get_query_var('gaming_code'))
-		$query .= '&gaming_code=' . get_query_var('gaming_code');
-	return $query;
-}
-
-add_filter('users_join', 'gaming_codes_users_join');
-
-function gaming_codes_users_join($join) {
-	global $wpdb;
-	if ('' !== get_query_var('gaming_code'))
-		$join .= " INNER JOIN $wpdb->usermeta ON ($wpdb->users.ID = $wpdb->usermeta.user_id) ";
-	return $join;
-}
-
-add_filter('users_where', 'gaming_code_users_where');
-function gaming_code_users_where($where) {
-	global $wpdb, $el_aleph_uq, $gaming_fields;
-	if ('' != get_query_var('gaming_code')) {
-		$slug = get_query_var('gaming_code');
-		if (isset($gaming_fields[$slug])) {
-			$el_aleph_uq->queried_object = $gaming_fields[$slug];
-			$meta_key = preg_replace('|[^a-z0-9_]|i', '', $el_aleph_uq->queried_object['id']); // from update usermeta
-			$where .= " AND $wpdb->usermeta.meta_key = '$meta_key' ";
-		} 
-		else 
-			$where .= " AND 0 ";
-	}
-	return $where;
-}
-
 /// conditional tag for your templates
 
 function is_gaming_code_listing() {
-	return is_user_list() && ('' != get_query_var('gaming_code'));
-}
-
-/// rewrite rules
-
-add_filter('rewrite_rules_array', 'gaming_codes_rewrite_rules');
-
-function gaming_codes_rewrite_rules($rewrite) {
 	global $gaming_fields;
-
-	$gaming_rules = array();
-
-	foreach ($gaming_fields as $slug => $label) {
-		$gaming_rules[__('searching', 'aleph') . '/' . __('people', 'aleph') . '/' . $label['type'] . '/' . $slug . '/page/?([0-9]{1,})/?$'] = 'index.php?pagename=author-list&gaming_code=' . $slug . '&paged=$matches[1]';
-		$gaming_rules[__('searching', 'aleph') . '/' . __('people', 'aleph') . '/' . $label['type'] . '/' . $slug . '/?$'] = 'index.php?pagename=author-list&gaming_code=' . $slug;
-	}
-
-	return $gaming_rules + $rewrite;
+	if (is_user_view() && strpos(get_query_var('user_view'), 'gaming-codes-') !== false) 
+		return true;
+	return false;
 }
 
-/// user lists links
-
-add_filter('aleph_user_lists', 'gaming_codes_user_lists');
-
-function gaming_codes_user_lists($lists) {
-	global $wp_rewrite, $gaming_fields;
-	if ($wp_rewrite->using_permalinks()) {
-		foreach ($gaming_fields as $name => $label)
-			$lists[] = '<a href="' . get_option('siteurl') . '/' . __('searching', 'aleph') . '/' . __('people', 'aleph') . '/' . $label['type'] . '/' . $name . '">' . sprintf(__("With a %s", 'gaming-codes'), $label['description']) . '</a>';
-	} else {
-		foreach ($gaming_fields as $name => $label) 
-			$lists[] = '<a href="' . get_option('siteurl') . '?pagename=author-interests&gaming_code=' . $name . '">' . sprintf(__("With a %s", 'gaming-codes'), $label['description']) . '</a>';	
+function the_user_current_gaming_code($u = NULL) {
+	global $user, $gaming_fields;
+	if (!$u)
+		$u = $user;
+	if ($u) {
+		$slug = str_replace('gaming-codes-', '', get_query_var('user_view'));
+		if (isset($gaming_fields[$slug])) {
+			$field_key = preg_replace('|[^a-z0-9_]|i', '', $gaming_fields[$slug]['id']);
+			if (!empty($field_key)) {
+				$code = '';
+				if ($u->{$field_key}) 
+					$code = '<li class="' . $slug . '"><span>' . $gaming_fields[$slug]['description'] . '</span> ' . $u->{$field_key} . '</li>';
+				else {
+					$value = get_usermeta($u->ID, $field_key);
+					if ($value != '') 
+						$code = '<li class="' . $slug . '"><span>' . $gaming_fields[$slug]['description'] . '</span> ' . $value . '</li>';
+				}
+				if (!empty($code))
+					echo '<ul class="gaming-codes">' . $code . '</ul>';
+			}
+		}
 	}
-	return $lists;
 }
 
-/// user lists template title
+// gamercard
 
-add_filter('aleph_user_template_title', 'gaming_codes_aleph_template_title');
-
-function gaming_codes_aleph_template_title($title) {
-	global $gaming_fields;	
-	if (is_gaming_code_listing()) {
-    	if (have_users())
-    		$title = sprintf(__("Users with a %s", 'gaming-codes'), $gaming_fields[get_query_var('gaming_code')]['description']);
-        else 
-            $title = __("Sorry", "aleph");
-	}
-	return $title;
-}
-/// filter for fake post title
-
-add_filter('users_template_title', 'gaming_code_page_title');
-
-function gaming_code_page_title($title) {
-	global $gaming_fields;
-	if (isset($gaming_fields[get_query_var('gaming_code')])) 
-		return sprintf(__("Users with a %s", 'gaming-codes'), $gaming_fields[get_query_var('gaming_code')]['description']);
-	else 
-		return $title;
+function the_user_gamercard($u = NULL) {
+	global $user;
+	if (!$u)
+		$u = $user;
+	if ($u) { 
+		$field = preg_replace('|[^a-z0-9_]|i', '', 'gaming_code-x360');
+		$tag = $u->{$field};
+		if (empty($tag))
+			$tag = get_usermeta($u->ID, $field);
+		if (!empty($tag))
+			echo '<iframe src="http://gamercard.xbox.com/' . urlencode($tag) . '.card" frameborder="0" height="141" scrolling="no" width="204"></iframe>';
+	}	
 }
 
-/// template tag to display links to the user lists
-
-function gaming_codes_links($before = '<ul class="gaming-codes-links"><li>', $after = '</li></ul>', $separator = '</li><li>') {
-	global $wp_rewrite, $gaming_fields;
-	$links = array();
-	if ($wp_rewrite->using_permalinks()) {
-		foreach ($gaming_fields as $name => $label)
-			$links[] = '<a href="' . get_option('siteurl') . '/' . __('searching', 'aleph') . '/' . __('people', 'aleph') . '/' . $label['type'] . '/' . $name . '">' . sprintf(__("See users with a %s", 'gaming-codes'), $label['description']) . '</a>';
-	} else {
-		foreach ($gaming_fields as $name => $label) 
-			$links[] = '<a href="' . get_option('siteurl') . '?pagename=author-interests&gaming_code=' . $name . '">' . sprintf(__("See users with a %s", 'gaming-codes'), $label['description']) . '</a>';
-	}
-	if (!empty($links)) 
-		echo $before . implode($separator, $links) . $after;
+function the_author_gamercard() {
+	global $authordata;
+	the_user_gamercard($authordata);
 }
 
 ?>
